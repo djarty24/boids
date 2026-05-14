@@ -28,7 +28,13 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * Implemented a 2D Vector class to handle physics
     * Created basic methods for adding, subtracting, scalar multiplication, division
     * Added magnitude, normalization, and distance algorithms (needed for vector math)
-2. 
+2. Created Boid.ts
+    * This file stores the variables for position, velocity, acceleration
+    * Calculate movement by applying acceleration to velocity and velocity to position
+    * Built an accumulation function (from my calc bc class!) to process external steering forces
+        * Steering forces are essentailly the difference between where an object wants to go and where it is currently going (Desired Velocity - Current Velocity)
+    * Long distance weighting calculate a "repulsive" vector that stops boids from colliding with other ones
+3. 
 
 ---
 <div align="center">
