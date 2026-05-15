@@ -52,8 +52,13 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * I also learned about an interesting O(N^2) performance bottleneck causing frame rate drops during continuous distance checks
         * Optimized Vector class by creating a squared distance method as Math.sqrt() is pretty computationally heavy
     * Overall managed to increase FPS
-6. 
-
+6. Panned the background gradient
+    * Designed a custom CSS animation to pan a background gradient, creating an ambient shader effect
+    * Fixed a hardware rendering artifact causing canvas pixelation on High-DPI displays (since I use a Retina display on my mac it looked blurrier than on other screens)
+        * Added resolution scaling by using window.devicePixelRatio
+    * Finalized typography variables, updating the font weight, family fallbacks, hex color, etc.
+    * Defined a SimulationConfig interface to strictly type the physics parameters
+    * Implemented React state (useState) in the root application component
 
 ---
 <div align="center">

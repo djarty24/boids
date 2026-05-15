@@ -1,8 +1,17 @@
 import { useEffect, useRef } from 'react';
-import { Boid } from '../engine/Boid';
+import { Boid, type SimulationConfig } from '../engine/Boid';
 
-export function CanvasView() {
+interface CanvasViewProps {
+	config: SimulationConfig;
+}
+
+export function CanvasView({ config }: CanvasViewProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const configRef = useRef<SimulationConfig>(config);
+
+	useEffect(() => {
+		configRef.current = config;
+	}, [config]);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -16,36 +25,41 @@ export function CanvasView() {
 		const numBoids = 75;
 
 		const resizeCanvas = () => {
-			canvas.width = window.innerWidth;
-			canvas.height = window.innerHeight;
+			const dpr = window.devicePixelRatio || 1;
+
+			canvas.width = window.innerWidth * dpr;
+			canvas.height = window.innerHeight * dpr;
+
+			canvas.style.width = `${window.innerWidth}px`;
+			canvas.style.height = `${window.innerHeight}px`;
+
+			ctx.scale(dpr, dpr);
 		};
 
 		window.addEventListener('resize', resizeCanvas);
 		resizeCanvas();
 
 		for (let i = 0; i < numBoids; i++) {
-			boids.push(new Boid(Math.random() * canvas.width, Math.random() * canvas.height));
+			boids.push(new Boid(Math.random() * window.innerWidth, Math.random() * window.innerHeight));
 		}
 
 		const render = () => {
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-			ctx.font = '14px monospace';
-			ctx.fillStyle = '#065f46';
+			ctx.font = 'bold 16px "Fira Code", "JetBrains Mono", monospace';
+			ctx.fillStyle = '#064e3b';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
 
 			const glyphs = ['>', '↘', 'v', '↙', '<', '↖', '^', '↗'];
 
 			for (const boid of boids) {
-				boid.flock(boids);
+				boid.flock(boids, configRef.current);
 				boid.update();
-				boid.borders(canvas.width, canvas.height);
+				boid.borders(window.innerWidth, window.innerHeight);
 
 				const heading = Math.atan2(boid.velocity.y, boid.velocity.x);
-
 				let octant = Math.round(8 * heading / (2 * Math.PI));
-
 				octant = (octant + 8) % 8;
 
 				ctx.fillText(glyphs[octant], boid.position.x, boid.position.y);

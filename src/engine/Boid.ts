@@ -1,5 +1,12 @@
 import { Vector } from './Vector';
 
+export interface SimulationConfig {
+	separationWeight: number;
+	alignmentWeight: number;
+	cohesionWeight: number;
+	maxSpeed: number;
+}
+
 export class Boid {
 	position: Vector;
 	velocity: Vector;
@@ -111,14 +118,16 @@ export class Boid {
 		return steer;
 	}
 
-	flock(boids: Boid[]): void {
+	flock(boids: Boid[], config: SimulationConfig): void {
+		this.maxSpeed = config.maxSpeed;
+
 		const sep = this.separate(boids);
 		const ali = this.align(boids);
 		const coh = this.cohere(boids);
 
-		sep.mult(1.5);
-		ali.mult(1.0);
-		coh.mult(1.0);
+		sep.mult(config.separationWeight);
+		ali.mult(config.alignmentWeight);
+		coh.mult(config.cohesionWeight);
 
 		this.applyForce(sep);
 		this.applyForce(ali);
