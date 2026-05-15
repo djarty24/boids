@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Boid, type SimulationConfig } from '../engine/Boid';
+import { Vector } from '../engine/Vector';
 
 interface CanvasViewProps {
 	config: SimulationConfig;
@@ -8,6 +9,7 @@ interface CanvasViewProps {
 export function CanvasView({ config }: CanvasViewProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const configRef = useRef<SimulationConfig>(config);
+	const mouseRef = useRef<Vector | null>(null);
 
 	useEffect(() => {
 		configRef.current = config;
@@ -22,7 +24,23 @@ export function CanvasView({ config }: CanvasViewProps) {
 
 		let animationFrameId: number;
 		const boids: Boid[] = [];
-		const numBoids = 75;
+		const numBoids = 100;
+
+		const handleMouseMove = (e: MouseEvent) => {
+			const rect = canvas.getBoundingClientRect();
+			const x = e.clientX - rect.left;
+			const y = e.clientY - rect.top;
+
+			const dpr = window.devicePixelRatio || 1;
+			mouseRef.current = new Vector(x * dpr, y * dpr);
+		};
+
+		const handleMouseLeave = () => {
+			mouseRef.current = null;
+		};
+
+		window.addEventListener('mousemove', handleMouseMove);
+		window.addEventListener('mouseleave', handleMouseLeave);
 
 		const resizeCanvas = () => {
 			const dpr = window.devicePixelRatio || 1;
@@ -47,14 +65,18 @@ export function CanvasView({ config }: CanvasViewProps) {
 			ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
 			ctx.font = 'bold 16px "Fira Code", "JetBrains Mono", monospace';
-			ctx.fillStyle = '#064e3b';
+			ctx.fillStyle = '#082f49';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
 
 			const glyphs = ['>', '↘', 'v', '↙', '<', '↖', '^', '↗'];
 
+			const currentMouse = mouseRef.current
+				? new Vector(mouseRef.current.x / (window.devicePixelRatio || 1), mouseRef.current.y / (window.devicePixelRatio || 1))
+				: null;
+
 			for (const boid of boids) {
-				boid.flock(boids, configRef.current);
+				boid.flock(boids, configRef.current, currentMouse);
 				boid.update();
 				boid.borders(window.innerWidth, window.innerHeight);
 
@@ -71,6 +93,8 @@ export function CanvasView({ config }: CanvasViewProps) {
 		render();
 
 		return () => {
+			window.removeEventListener('mousemove', handleMouseMove);
+			window.removeEventListener('mouseleave', handleMouseLeave);
 			window.removeEventListener('resize', resizeCanvas);
 			cancelAnimationFrame(animationFrameId);
 		};

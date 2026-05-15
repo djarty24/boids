@@ -118,7 +118,16 @@ export class Boid {
 		return steer;
 	}
 
-	flock(boids: Boid[], config: SimulationConfig): void {
+	flee(target: Vector): Vector {
+		const desired = Vector.sub(this.position, target);
+		desired.normalize();
+		desired.mult(this.maxSpeed);
+		const steer = Vector.sub(desired, this.velocity);
+		steer.limit(this.maxForce);
+		return steer;
+	}
+
+	flock(boids: Boid[], config: SimulationConfig, mousePos: Vector | null): void {
 		this.maxSpeed = config.maxSpeed;
 
 		const sep = this.separate(boids);
@@ -132,6 +141,16 @@ export class Boid {
 		this.applyForce(sep);
 		this.applyForce(ali);
 		this.applyForce(coh);
+
+		if (mousePos) {
+			const mouseRadius = 150;
+			const dSq = this.position.distSq(mousePos);
+			if (dSq < mouseRadius * mouseRadius) {
+				const fleeForce = this.flee(mousePos);
+				fleeForce.mult(5.0);
+				this.applyForce(fleeForce);
+			}
+		}
 	}
 
 	borders(width: number, height: number): void {

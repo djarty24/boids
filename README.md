@@ -65,8 +65,11 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * Upgraded the overlay to a glassmorphic design using Tailwind filters
     * Decided to change the Typography to something more elegant, Instrument Serif and Inter
     * Adjusted the canvas gradient to be sky blue and teal
-8. 
-
+8. Added mouse interactions to control the boids!
+    * Created a flee behaviour method to calculate a steering vector that opposes a provided coordinate
+    * Developed an interaction radius check within the animation loop to isolate the cursor
+    * Added a weight multipliernto the flee vector to prioritize collision avoidance over boid flight
+9. 
 
 ---
 <div align="center">
