@@ -27,16 +27,16 @@ export class Boid {
 	}
 
 	separate(boids: Boid[]): Vector {
-		const desiredSeparation = 25;
+		const desiredSeparationSq = 25 * 25;
 		const steer = new Vector(0, 0);
 		let count = 0;
 
 		for (const other of boids) {
-			const d = this.position.dist(other.position);
-			if (d > 0 && d < desiredSeparation) {
+			const dSq = this.position.distSq(other.position);
+			if (dSq > 0 && dSq < desiredSeparationSq) {
 				const diff = Vector.sub(this.position, other.position);
 				diff.normalize();
-				diff.div(d);
+				diff.div(Math.sqrt(dSq));
 				steer.add(diff);
 				count++;
 			}
@@ -57,13 +57,13 @@ export class Boid {
 	}
 
 	align(boids: Boid[]): Vector {
-		const neighborDist = 50;
+		const neighborDistSq = 50 * 50;
 		const sum = new Vector(0, 0);
 		let count = 0;
 
 		for (const other of boids) {
-			const d = this.position.dist(other.position);
-			if (d > 0 && d < neighborDist) {
+			const dSq = this.position.distSq(other.position);
+			if (dSq > 0 && dSq < neighborDistSq) {
 				sum.add(other.velocity);
 				count++;
 			}
@@ -82,13 +82,13 @@ export class Boid {
 	}
 
 	cohere(boids: Boid[]): Vector {
-		const neighborDist = 50;
+		const neighborDistSq = 50 * 50;
 		const sum = new Vector(0, 0);
 		let count = 0;
 
 		for (const other of boids) {
-			const d = this.position.dist(other.position);
-			if (d > 0 && d < neighborDist) {
+			const dSq = this.position.distSq(other.position);
+			if (dSq > 0 && dSq < neighborDistSq) {
 				sum.add(other.position);
 				count++;
 			}

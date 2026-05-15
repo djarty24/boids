@@ -45,7 +45,15 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * Implemented an animation loop to continuously clear and redraw the canvas
     * Generated an initial array of 150 Boids with randomized starting coordinates
     * (For now) Rendered each bird as a dot on screen
-5. 
+5. Optimized rendering to be less laggy and more smooth
+    * Refactored canvas to replace dots with fun ASCII characters
+    * Implemented conditional rendering to switch ASCII characters based on the direction
+        * Did this by mapping the each boid vector using Math.atan2 into eight quadrants (or octetants whatever its called)
+    * I also learned about an interesting O(N^2) performance bottleneck causing frame rate drops during continuous distance checks
+        * Optimized Vector class by creating a squared distance method as Math.sqrt() is pretty computationally heavy
+    * Overall managed to increase FPS
+6. 
+
 
 ---
 <div align="center">

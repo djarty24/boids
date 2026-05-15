@@ -2,60 +2,70 @@ import { useEffect, useRef } from 'react';
 import { Boid } from '../engine/Boid';
 
 export function CanvasView() {
-const canvasRef = useRef<HTMLCanvasElement>(null);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
 
-useEffect(() => {
-	const canvas = canvasRef.current;
-	if (!canvas) return;
+	useEffect(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
 
-	const ctx = canvas.getContext('2d');
-	if (!ctx) return;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return;
 
-	let animationFrameId: number;
-	const boids: Boid[] = [];
-	const numBoids = 150;
+		let animationFrameId: number;
+		const boids: Boid[] = [];
+		const numBoids = 75;
 
-	const resizeCanvas = () => {
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-	};
+		const resizeCanvas = () => {
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
 
-	window.addEventListener('resize', resizeCanvas);
-	resizeCanvas();
+		window.addEventListener('resize', resizeCanvas);
+		resizeCanvas();
 
-	for (let i = 0; i < numBoids; i++) {
-	boids.push(new Boid(Math.random() * canvas.width, Math.random() * canvas.height));
-	}
+		for (let i = 0; i < numBoids; i++) {
+			boids.push(new Boid(Math.random() * canvas.width, Math.random() * canvas.height));
+		}
 
-	const render = () => {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.fillStyle = '#065f46';
+		const render = () => {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	for (const boid of boids) {
-		boid.flock(boids);
-		boid.update();
-		boid.borders(canvas.width, canvas.height);
+			ctx.font = '14px monospace';
+			ctx.fillStyle = '#065f46';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
 
-		ctx.beginPath();
-		ctx.arc(boid.position.x, boid.position.y, 3, 0, Math.PI * 2);
-		ctx.fill();
-	}
+			const glyphs = ['>', '↘', 'v', '↙', '<', '↖', '^', '↗'];
 
-	animationFrameId = requestAnimationFrame(render);
-	};
+			for (const boid of boids) {
+				boid.flock(boids);
+				boid.update();
+				boid.borders(canvas.width, canvas.height);
 
-	render();
+				const heading = Math.atan2(boid.velocity.y, boid.velocity.x);
 
-	return () => {
-	window.removeEventListener('resize', resizeCanvas);
-	cancelAnimationFrame(animationFrameId);
-	};
-}, []);
+				let octant = Math.round(8 * heading / (2 * Math.PI));
 
-return (
-	<canvas
-	ref={canvasRef}
-	className="absolute inset-0 block w-full h-full pointer-events-none"
-	/>
-);
+				octant = (octant + 8) % 8;
+
+				ctx.fillText(glyphs[octant], boid.position.x, boid.position.y);
+			}
+
+			animationFrameId = requestAnimationFrame(render);
+		};
+
+		render();
+
+		return () => {
+			window.removeEventListener('resize', resizeCanvas);
+			cancelAnimationFrame(animationFrameId);
+		};
+	}, []);
+
+	return (
+		<canvas
+			ref={canvasRef}
+			className="absolute inset-0 block w-full h-full pointer-events-none"
+		/>
+	);
 }
