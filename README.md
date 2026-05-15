@@ -34,7 +34,13 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * Built an accumulation function (from my calc bc class!) to process external steering forces
         * Steering forces are essentailly the difference between where an object wants to go and where it is currently going (Desired Velocity - Current Velocity)
     * Long distance weighting calculate a "repulsive" vector that stops boids from colliding with other ones
-3. 
+3. Updated Boid.ts to add alignment math
+    * Implemented alignment math to calculate a force that steers boids toward the average heading of local flocks
+    * Implemented cohesion math to steer boids toward the average position of local flocks
+    * Integrated all three forces into a single flock method
+    * Built a boundary management function to enforce toroidal space, allowing boids to wrap seamlessly across the screen edges
+        * ***Toroidal space make sure when an object exits the left side of the screen it reappears on the far right side at the exact same y-coordinate (same for up/down with x coordinate)
+4. 
 
 ---
 <div align="center">
