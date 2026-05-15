@@ -5,6 +5,10 @@ export interface SimulationConfig {
 	alignmentWeight: number;
 	cohesionWeight: number;
 	maxSpeed: number;
+	bannerText: string;
+	boidColor: string;
+	fontFamily: string;
+	skyColors: { c1: string, c2: string, c3: string };
 }
 
 export class Boid {

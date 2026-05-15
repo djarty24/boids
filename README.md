@@ -75,8 +75,12 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * Styled it to match the glassmorphism effect on the control panels
     * Made the popup and text responsive
     * Made sure to include the articles I used as references
-10. 
-
+10. Made an Export PNG button and added more styling
+    * Transitioned the animated background so that users can select the sky gradient
+    * Made the textbox drag-and-drop using ctx.measureText to approx bounding boxes
+    * Made a PNG export utility utilizing canvas.toDataURL
+    * Expanded the ControlPanel UI with color pickers for boids and the sky gradient + font selection
+11. 
 
 ---
 <div align="center">

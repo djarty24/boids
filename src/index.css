@@ -1,13 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;700&family=Fira+Code:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
 	--font-sans: "Inter", sans-serif;
 	--font-serif: "Instrument Serif", serif;
+	--font-mono: "Fira Code", monospace;
+}
+
+:root {
+	--sky-1: #bae6fd;
+	--sky-2: #ccfbf1;
+	--sky-3: #cffafe;
 }
 
 @layer utilities {
 	.animate-gradient {
+		background: linear-gradient(135deg, var(--sky-1), var(--sky-2), var(--sky-3));
 		background-size: 400% 400%;
 		animation: gradientShift 15s ease infinite;
 	}

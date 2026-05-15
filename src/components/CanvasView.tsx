@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Boid, type SimulationConfig } from '../engine/Boid';
 import { Vector } from '../engine/Vector';
 
@@ -6,25 +6,68 @@ interface CanvasViewProps {
 	config: SimulationConfig;
 }
 
-export function CanvasView({ config }: CanvasViewProps) {
+export interface CanvasRef {
+	exportPNG: () => void;
+}
+
+export const CanvasView = forwardRef<CanvasRef, CanvasViewProps>(({ config }, ref) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const configRef = useRef<SimulationConfig>(config);
 	const mouseRef = useRef<Vector | null>(null);
+
+	// Text Dragging State
+	const textPosRef = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+	const isDraggingRef = useRef(false);
 
 	useEffect(() => {
 		configRef.current = config;
 	}, [config]);
 
+	// Expose the export functionality to the parent App component
+	useImperativeHandle(ref, () => ({
+		exportPNG: () => {
+			const canvas = canvasRef.current;
+			if (!canvas) return;
+			const dataUrl = canvas.toDataURL('image/png');
+			const link = document.createElement('a');
+			link.download = 'boids-banner.png';
+			link.href = dataUrl;
+			link.click();
+		}
+	}));
+
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
-
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
 
 		let animationFrameId: number;
 		const boids: Boid[] = [];
-		const numBoids = 100;
+		const numBoids = 75;
+
+		// --- Dragging & Interaction Logic ---
+		const handleMouseDown = (e: MouseEvent) => {
+			if (!configRef.current.bannerText) return;
+
+			const rect = canvas.getBoundingClientRect();
+			const clickX = e.clientX - rect.left;
+			const clickY = e.clientY - rect.top;
+
+			ctx.font = `normal 15vw ${configRef.current.fontFamily}`;
+			const metrics = ctx.measureText(configRef.current.bannerText);
+			const textWidth = metrics.width;
+			const textHeight = window.innerWidth * 0.15; // Approximate height based on 15vw
+
+			// Check if click is inside the text bounding box
+			const dx = Math.abs(clickX - textPosRef.current.x);
+			const dy = Math.abs(clickY - textPosRef.current.y);
+
+			if (dx < textWidth / 2 && dy < textHeight / 2) {
+				isDraggingRef.current = true;
+				canvas.style.cursor = 'grabbing';
+			}
+		};
 
 		const handleMouseMove = (e: MouseEvent) => {
 			const rect = canvas.getBoundingClientRect();
@@ -33,25 +76,40 @@ export function CanvasView({ config }: CanvasViewProps) {
 
 			const dpr = window.devicePixelRatio || 1;
 			mouseRef.current = new Vector(x * dpr, y * dpr);
+
+			if (isDraggingRef.current) {
+				textPosRef.current = { x, y };
+			}
+		};
+
+		const handleMouseUp = () => {
+			isDraggingRef.current = false;
+			canvas.style.cursor = 'default';
 		};
 
 		const handleMouseLeave = () => {
 			mouseRef.current = null;
+			isDraggingRef.current = false;
+			canvas.style.cursor = 'default';
 		};
 
+		canvas.addEventListener('mousedown', handleMouseDown);
 		window.addEventListener('mousemove', handleMouseMove);
-		window.addEventListener('mouseleave', handleMouseLeave);
+		window.addEventListener('mouseup', handleMouseUp);
+		canvas.addEventListener('mouseleave', handleMouseLeave);
 
 		const resizeCanvas = () => {
 			const dpr = window.devicePixelRatio || 1;
-
 			canvas.width = window.innerWidth * dpr;
 			canvas.height = window.innerHeight * dpr;
-
 			canvas.style.width = `${window.innerWidth}px`;
 			canvas.style.height = `${window.innerHeight}px`;
-
 			ctx.scale(dpr, dpr);
+
+			// Recenter text on resize if it hasn't been dragged
+			if (!isDraggingRef.current) {
+				textPosRef.current = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+			}
 		};
 
 		window.addEventListener('resize', resizeCanvas);
@@ -61,11 +119,22 @@ export function CanvasView({ config }: CanvasViewProps) {
 			boids.push(new Boid(Math.random() * window.innerWidth, Math.random() * window.innerHeight));
 		}
 
+		// --- Render Loop ---
 		const render = () => {
 			ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
+			const { bannerText, fontFamily, boidColor } = configRef.current;
+
+			if (bannerText) {
+				ctx.font = `normal 15vw ${fontFamily}`;
+				ctx.fillStyle = 'rgba(15, 23, 42, 0.15)';
+				ctx.textAlign = 'center';
+				ctx.textBaseline = 'middle';
+				ctx.fillText(bannerText, textPosRef.current.x, textPosRef.current.y);
+			}
+
 			ctx.font = 'bold 16px "Fira Code", "JetBrains Mono", monospace';
-			ctx.fillStyle = '#082f49';
+			ctx.fillStyle = boidColor;
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
 
@@ -93,8 +162,10 @@ export function CanvasView({ config }: CanvasViewProps) {
 		render();
 
 		return () => {
+			canvas.removeEventListener('mousedown', handleMouseDown);
 			window.removeEventListener('mousemove', handleMouseMove);
-			window.removeEventListener('mouseleave', handleMouseLeave);
+			window.removeEventListener('mouseup', handleMouseUp);
+			canvas.removeEventListener('mouseleave', handleMouseLeave);
 			window.removeEventListener('resize', resizeCanvas);
 			cancelAnimationFrame(animationFrameId);
 		};
@@ -103,7 +174,7 @@ export function CanvasView({ config }: CanvasViewProps) {
 	return (
 		<canvas
 			ref={canvasRef}
-			className="absolute inset-0 block w-full h-full pointer-events-none"
+			className="absolute inset-0 block w-full h-full cursor-default"
 		/>
 	);
-}
+});
