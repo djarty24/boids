@@ -40,7 +40,12 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * Integrated all three forces into a single flock method
     * Built a boundary management function to enforce toroidal space, allowing boids to wrap seamlessly across the screen edges
         * ***Toroidal space make sure when an object exits the left side of the screen it reappears on the far right side at the exact same y-coordinate (same for up/down with x coordinate)
-4. 
+4. Started implementing the renderer
+    * Created a React component to mount an HTML5 Canvas element using a useRef hook
+    * Implemented an animation loop to continuously clear and redraw the canvas
+    * Generated an initial array of 150 Boids with randomized starting coordinates
+    * (For now) Rendered each bird as a dot on screen
+5. 
 
 ---
 <div align="center">
