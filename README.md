@@ -59,6 +59,14 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * Finalized typography variables, updating the font weight, family fallbacks, hex color, etc.
     * Defined a SimulationConfig interface to strictly type the physics parameters
     * Implemented React state (useState) in the root application component
+7. Added a glasmorphism inspired layout panel
+    * Created `ControlPanel.tsx` component
+    * Created a custom Stepper component to replace sliders
+    * Upgraded the overlay to a glassmorphic design using Tailwind filters
+    * Decided to change the Typography to something more elegant, Instrument Serif and Inter
+    * Adjusted the canvas gradient to be sky blue and teal
+8. 
+
 
 ---
 <div align="center">
