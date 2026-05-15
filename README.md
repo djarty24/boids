@@ -69,7 +69,14 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * Created a flee behaviour method to calculate a steering vector that opposes a provided coordinate
     * Developed an interaction radius check within the animation loop to isolate the cursor
     * Added a weight multipliernto the flee vector to prioritize collision avoidance over boid flight
-9. 
+9. Created an info panel explaining how the algorithm works
+    * Created an `EducationalModal.tsx` component to explain the simulation
+        * Went into detail on the separation, alignment, and cohesion vectors
+    * Styled it to match the glassmorphism effect on the control panels
+    * Made the popup and text responsive
+    * Made sure to include the articles I used as references
+10. 
+
 
 ---
 <div align="center">

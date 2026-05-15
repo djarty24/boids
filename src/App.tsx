@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CanvasView } from './components/CanvasView';
 import { ControlPanel } from './components/ControlPanel';
+import { EducationalModal } from './components/EducationalModal';
 import type { SimulationConfig } from './engine/Boid';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
 			<div className="absolute inset-0 z-0 animate-gradient bg-linear-to-br from-sky-200 via-teal-100 to-cyan-100" />
 			<CanvasView config={config} />
 			<ControlPanel config={config} setConfig={setConfig} />
+			<EducationalModal />
 		</main>
 	)
 }

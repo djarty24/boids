@@ -143,7 +143,7 @@ export class Boid {
 		this.applyForce(coh);
 
 		if (mousePos) {
-			const mouseRadius = 150;
+			const mouseRadius = 110;
 			const dSq = this.position.distSq(mousePos);
 			if (dSq < mouseRadius * mouseRadius) {
 				const fleeForce = this.flee(mousePos);
