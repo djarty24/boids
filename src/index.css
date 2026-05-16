@@ -19,6 +19,15 @@
 		background-size: 400% 400%;
 		animation: gradientShift 15s ease infinite;
 	}
+
+	.handdrawn-panel {
+		border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+	}
+
+	.handdrawn-button {
+		border-radius: 15px 225px 15px 255px/255px 15px 225px 15px;
+	}
+
 }
 
 @keyframes gradientShift {

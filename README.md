@@ -1,20 +1,30 @@
-# Boids
+# Boids Simulation
 
-An ASCII styled simulation of bird flocks, algorithmically generated using the Boids algorithm.
+An ASCII styled simulation of bird flocks, algorithmically generated using the Boids algorithm. You can design your own and record a GIF to add to your Github Profile Banner!
 
 ## Features
-* An interactive home page with about, work, and contact sections
-* A custom guestbook where visitors can plant a flower in my digital garden and leave me a message
-* A markdown-based blogging system built on file-based routing to track all of my ideas
-    * Blog includes a tagging system to organize posts and make them easier to find
-* Lots of interactive, hand drawn animations to make my site fun!
+* Watch a swarm of boids fly together using three rules
+* Move your mouse across the screen to scatter the flock and watch them organically regroup
+* A control panel that lets you change the birds' speed, colors, and behavior on the fly. You can also tuck the panel away if you just want to watch!
+* A **github banner generator!** Type in your name and generate a massive, stylish watermark that sits perfectly behind the flock
+    * Click a button to record a perfectly looping, highly-optimized GIF of your custom banner to use on your GitHub profile
+* A built-in info panel that explains how the flocking algorithm actually works
 
 ## Tech Stack
 A list of the toools used to build my website:
 1. React
-    * Framework
-2. Tailwind CSS v4
-    * Used for all of the styling
+    * Used to build the control panel interface and manage your custom settings without interrupting the animation.
+2. TypeScript
+    * Kept the complex math and physics code organized and bug-free
+3. Vite
+    * Used to build the project quickly and ensure it loads fast
+4. HTML5 Canvas
+    * The digital drawing board that smoothly animates the birds, the text, and the shifting sky background at 60 FPS
+5. Tailwind CSS v4
+    * Used to quickly style the beautiful frosted glass overlay and hand-drawn buttons
+6. gif.js
+    * A neat tool that records the canvas and turns it into a downloadable GIF file, running entirely in the background so the app doesn't freeze
+
 
 ## Developer Log (for Hack Club's Sleepover event!)
 This is an hour by hour log of everything I worked on and when each feature was implemented.
@@ -88,7 +98,12 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * Added a gif.js to handle recording the animation
         * Because making a GIF takes a lot of computer power, we set it up to run in the background to make sure the app doesn't freeze and the birds keep flying smoothly while your GIF is being made
     * Updated the export button so that it temporarily locks the button while the GIF is being recorded
-12. 
+12. Finalizing my project submission (it's kind of sad that this is my last sleepover submission)
+    * Designed a favicon for the website
+    * Added a collapse Control Panel button
+    * Ran npm run build and fixed up minor import issues before deploying
+    * Deployed project to Vercel!
+    * Final README updates for the feature list and tech stack description
 
 ---
 <div align="center">

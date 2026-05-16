@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { SimulationConfig } from '../engine/Boid';
 
 interface ControlPanelProps {
@@ -39,6 +40,8 @@ function Stepper({ label, value, min, max, step, onChange }: StepperProps) {
 }
 
 export function ControlPanel({ config, setConfig, onExport, isRecording }: ControlPanelProps) {
+	const [isCollapsed, setIsCollapsed] = useState(false); // NEW: Collapse state
+
 	const updateParam = (key: keyof SimulationConfig, value: any) => {
 		setConfig(prev => ({ ...prev, [key]: value }));
 	};
@@ -48,66 +51,85 @@ export function ControlPanel({ config, setConfig, onExport, isRecording }: Contr
 	};
 
 	return (
-		<div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl p-4 rounded-4xl bg-white/20 backdrop-blur-2xl backdrop-saturate-150 border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.1)] flex flex-col font-sans transition-all">
+		<div className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl p-6 bg-white/20 backdrop-blur-2xl backdrop-saturate-150 border-2 border-slate-700/50 shadow-[8px_8px_0px_rgba(15,23,42,0.1)] flex flex-col font-sans transition-all duration-500 handdrawn-panel`}>
 
-			<div className="flex flex-col md:flex-row items-center gap-6 w-full">
-				<div className="flex flex-col items-center md:items-start px-6 gap-2">
-					<h2 className="text-3xl font-serif text-slate-900">Controls</h2>
-					<div className="flex gap-2">
-						<input type="color" value={config.skyColors.c1} onChange={(e) => updateSky('c1', e.target.value)} className="w-6 h-6 rounded cursor-pointer border-none bg-transparent" title="Sky Color 1" />
-						<input type="color" value={config.skyColors.c2} onChange={(e) => updateSky('c2', e.target.value)} className="w-6 h-6 rounded cursor-pointer border-none bg-transparent" title="Sky Color 2" />
-						<input type="color" value={config.skyColors.c3} onChange={(e) => updateSky('c3', e.target.value)} className="w-6 h-6 rounded cursor-pointer border-none bg-transparent" title="Sky Color 3" />
-						<input type="color" value={config.boidColor} onChange={(e) => updateParam('boidColor', e.target.value)} className="w-6 h-6 rounded cursor-pointer border-none bg-transparent ml-2" title="Boid Color" />
-					</div>
-				</div>
-
-				<div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
-					<Stepper label="Separation" value={config.separationWeight} min={0} max={5} step={0.1} onChange={(v) => updateParam('separationWeight', v)} />
-					<Stepper label="Alignment" value={config.alignmentWeight} min={0} max={5} step={0.1} onChange={(v) => updateParam('alignmentWeight', v)} />
-					<Stepper label="Cohesion" value={config.cohesionWeight} min={0} max={5} step={0.1} onChange={(v) => updateParam('cohesionWeight', v)} />
-					<Stepper label="Max Speed" value={config.maxSpeed} min={1} max={10} step={0.5} onChange={(v) => updateParam('maxSpeed', v)} />
-				</div>
-			</div>
-
-			<div className="w-full flex flex-col sm:flex-row items-center gap-4 mt-6 pt-6 border-t border-slate-900/10 px-2 md:px-6">
-				<select
-					value={config.fontFamily}
-					onChange={(e) => updateParam('fontFamily', e.target.value)}
-					className="bg-white/30 backdrop-blur-sm border border-white/50 rounded-xl px-4 py-3 text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400"
-				>
-					<option value='"Instrument Serif", serif'>Instrument Serif</option>
-					<option value='"Inter", sans-serif'>Inter</option>
-					<option value='"Fira Code", monospace'>Fira Code</option>
-				</select>
-
-				<input
-					type="text"
-					placeholder="Enter Banner Text..."
-					maxLength={20}
-					value={config.bannerText}
-					onChange={(e) => updateParam('bannerText', e.target.value)}
-					className="flex-1 w-full bg-white/30 backdrop-blur-sm border border-white/50 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-500 font-medium focus:outline-none focus:ring-2 focus:ring-sky-400 transition-all"
-				/>
-
+			<div className="flex items-center justify-between w-full px-2 md:px-6">
+				<h2 className="text-3xl font-serif text-slate-900">Controls</h2>
 				<button
-					onClick={onExport}
-					disabled={isRecording}
-					className={`w-full sm:w-auto px-8 py-3 rounded-xl font-medium tracking-wide transition-all shadow-md flex items-center justify-center gap-2 whitespace-nowrap ${isRecording ? 'bg-sky-500 text-white cursor-wait animate-pulse' : 'bg-slate-800 text-white hover:bg-slate-700 cursor-pointer'}`}
+					onClick={() => setIsCollapsed(!isCollapsed)}
+					className="p-2 border-2 border-slate-700/30 hover:bg-white/30 text-slate-800 transition-colors handdrawn-button"
+					title={isCollapsed ? "Expand Controls" : "Collapse Controls"}
 				>
-					{isRecording ? (
-						<>
-							<svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-							Compiling GIF...
-						</>
-					) : (
-						<>
-							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-							Record GitHub Banner
-						</>
-					)}
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="2"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						className={`transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}
+					>
+						<polyline points="6 9 12 15 18 9"></polyline>
+					</svg>
 				</button>
 			</div>
 
+			<div className={`w-full overflow-hidden transition-all duration-500 ease-in-out flex flex-col ${isCollapsed ? 'max-h-0 opacity-0' : 'max-h-200 opacity-100 mt-4'}`}>
+
+				<div className="flex flex-col md:flex-row items-center gap-6 w-full">
+					<div className="flex flex-col items-center md:items-start px-6 gap-2">
+						<div className="flex gap-2 bg-white/30 p-2 border-2 border-slate-700/30 handdrawn-button">
+							<input type="color" value={config.skyColors.c1} onChange={(e) => updateSky('c1', e.target.value)} className="w-6 h-6 rounded cursor-pointer border-none bg-transparent" title="Sky Color 1" />
+							<input type="color" value={config.skyColors.c2} onChange={(e) => updateSky('c2', e.target.value)} className="w-6 h-6 rounded cursor-pointer border-none bg-transparent" title="Sky Color 2" />
+							<input type="color" value={config.skyColors.c3} onChange={(e) => updateSky('c3', e.target.value)} className="w-6 h-6 rounded cursor-pointer border-none bg-transparent" title="Sky Color 3" />
+							<input type="color" value={config.boidColor} onChange={(e) => updateParam('boidColor', e.target.value)} className="w-6 h-6 rounded cursor-pointer border-none bg-transparent ml-2" title="Boid Color" />
+						</div>
+					</div>
+
+					<div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+						<Stepper label="Separation" value={config.separationWeight} min={0} max={5} step={0.1} onChange={(v) => updateParam('separationWeight', v)} />
+						<Stepper label="Alignment" value={config.alignmentWeight} min={0} max={5} step={0.1} onChange={(v) => updateParam('alignmentWeight', v)} />
+						<Stepper label="Cohesion" value={config.cohesionWeight} min={0} max={5} step={0.1} onChange={(v) => updateParam('cohesionWeight', v)} />
+						<Stepper label="Max Speed" value={config.maxSpeed} min={1} max={10} step={0.5} onChange={(v) => updateParam('maxSpeed', v)} />
+					</div>
+				</div>
+
+				<div className="w-full flex flex-col sm:flex-row items-center gap-4 mt-6 pt-6 border-t-2 border-slate-700/20 px-2 md:px-6">
+					<select
+						value={config.fontFamily}
+						onChange={(e) => updateParam('fontFamily', e.target.value)}
+						className="bg-white/30 backdrop-blur-sm border-2 border-slate-700/40 px-4 py-3 text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400 handdrawn-button cursor-pointer"
+					>
+						<option value='"Instrument Serif", serif'>Instrument Serif</option>
+						<option value='"Inter", sans-serif'>Inter</option>
+						<option value='"Fira Code", monospace'>Fira Code</option>
+					</select>
+
+					<input
+						type="text"
+						placeholder="Enter Banner Text..."
+						maxLength={20}
+						value={config.bannerText}
+						onChange={(e) => updateParam('bannerText', e.target.value)}
+						className="flex-1 w-full bg-white/30 backdrop-blur-sm border-2 border-slate-700/40 px-4 py-3 text-slate-800 placeholder-slate-500 font-medium focus:outline-none focus:ring-2 focus:ring-sky-400 transition-all handdrawn-panel"
+					/>
+
+					<button
+						onClick={onExport}
+						disabled={isRecording}
+						className={`w-full sm:w-auto px-8 py-3 font-bold tracking-wide transition-all flex items-center justify-center gap-2 whitespace-nowrap border-2 border-slate-800 handdrawn-button shadow-[4px_4px_0px_rgba(15,23,42,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_rgba(15,23,42,1)] ${isRecording ? 'bg-sky-200 text-slate-800 cursor-wait animate-pulse' : 'bg-slate-800 text-white cursor-pointer'}`}
+					>
+						{isRecording ? (
+							<span>Compiling GIF...</span>
+						) : (
+							<span>Record GitHub Banner</span>
+						)}
+					</button>
+				</div>
+
+			</div>
 		</div>
 	);
 }
