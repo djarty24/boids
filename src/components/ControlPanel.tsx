@@ -4,6 +4,7 @@ interface ControlPanelProps {
 	config: SimulationConfig;
 	setConfig: React.Dispatch<React.SetStateAction<SimulationConfig>>;
 	onExport: () => void;
+	isRecording: boolean;
 }
 
 interface StepperProps {
@@ -37,7 +38,7 @@ function Stepper({ label, value, min, max, step, onChange }: StepperProps) {
 	);
 }
 
-export function ControlPanel({ config, setConfig, onExport }: ControlPanelProps) {
+export function ControlPanel({ config, setConfig, onExport, isRecording }: ControlPanelProps) {
 	const updateParam = (key: keyof SimulationConfig, value: any) => {
 		setConfig(prev => ({ ...prev, [key]: value }));
 	};
@@ -47,7 +48,7 @@ export function ControlPanel({ config, setConfig, onExport }: ControlPanelProps)
 	};
 
 	return (
-		<div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl p-4 rounded-[2rem] bg-white/20 backdrop-blur-2xl backdrop-saturate-150 border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.1)] flex flex-col font-sans transition-all">
+		<div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl p-4 rounded-4xl bg-white/20 backdrop-blur-2xl backdrop-saturate-150 border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.1)] flex flex-col font-sans transition-all">
 
 			<div className="flex flex-col md:flex-row items-center gap-6 w-full">
 				<div className="flex flex-col items-center md:items-start px-6 gap-2">
@@ -90,10 +91,20 @@ export function ControlPanel({ config, setConfig, onExport }: ControlPanelProps)
 
 				<button
 					onClick={onExport}
-					className="w-full sm:w-auto bg-slate-800 text-white px-8 py-3 rounded-xl font-medium tracking-wide hover:bg-slate-700 transition-colors shadow-md flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer"
+					disabled={isRecording}
+					className={`w-full sm:w-auto px-8 py-3 rounded-xl font-medium tracking-wide transition-all shadow-md flex items-center justify-center gap-2 whitespace-nowrap ${isRecording ? 'bg-sky-500 text-white cursor-wait animate-pulse' : 'bg-slate-800 text-white hover:bg-slate-700 cursor-pointer'}`}
 				>
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-					Export Transparent PNG
+					{isRecording ? (
+						<>
+							<svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+							Compiling GIF...
+						</>
+					) : (
+						<>
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+							Record GitHub Banner
+						</>
+					)}
 				</button>
 			</div>
 

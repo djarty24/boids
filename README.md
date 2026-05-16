@@ -80,7 +80,15 @@ This is an hour by hour log of everything I worked on and when each feature was 
     * Made the textbox drag-and-drop using ctx.measureText to approx bounding boxes
     * Made a PNG export utility utilizing canvas.toDataURL
     * Expanded the ControlPanel UI with color pickers for boids and the sky gradient + font selection
-11. 
+11. Fixed the export to be a GIF that you can add to your github profile
+    * Honestly this might be too niche of a feature but I made it specifically because I was looking to add something interesting to my github profile README!
+        * Built a special mode just for exporting to GitHub
+        * When you click record, the app temporarily changes its shape to a wide rectangle (1200x400), perfectly centers your name, and takes the video for the GIF
+    * Moved the animated sky gradient directly inside the canvas drawing loop
+    * Added a gif.js to handle recording the animation
+        * Because making a GIF takes a lot of computer power, we set it up to run in the background to make sure the app doesn't freeze and the birds keep flying smoothly while your GIF is being made
+    * Updated the export button so that it temporarily locks the button while the GIF is being recorded
+12. 
 
 ---
 <div align="center">

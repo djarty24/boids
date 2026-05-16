@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { CanvasView, type CanvasRef } from './components/CanvasView';
 import { ControlPanel } from './components/ControlPanel';
 import { EducationalModal } from './components/EducationalModal';
@@ -6,6 +6,7 @@ import type { SimulationConfig } from './engine/Boid';
 
 function App() {
 	const canvasRef = useRef<CanvasRef>(null);
+	const [isRecording, setIsRecording] = useState(false);
 
 	const [config, setConfig] = useState<SimulationConfig>({
 		separationWeight: 1.5,
@@ -18,23 +19,17 @@ function App() {
 		skyColors: { c1: '#bae6fd', c2: '#ccfbf1', c3: '#cffafe' }
 	});
 
-	useEffect(() => {
-		document.documentElement.style.setProperty('--sky-1', config.skyColors.c1);
-		document.documentElement.style.setProperty('--sky-2', config.skyColors.c2);
-		document.documentElement.style.setProperty('--sky-3', config.skyColors.c3);
-	}, [config.skyColors]);
-
 	const handleExport = () => {
+		setIsRecording(true);
 		if (canvasRef.current) {
-			canvasRef.current.exportPNG();
+			canvasRef.current.exportGIF(() => setIsRecording(false));
 		}
 	};
 
 	return (
 		<main className="relative w-screen h-screen overflow-hidden bg-sky-50">
-			<div className="absolute inset-0 z-0 animate-gradient" />
 			<CanvasView ref={canvasRef} config={config} />
-			<ControlPanel config={config} setConfig={setConfig} onExport={handleExport} />
+			<ControlPanel config={config} setConfig={setConfig} onExport={handleExport} isRecording={isRecording} />
 			<EducationalModal />
 		</main>
 	)
